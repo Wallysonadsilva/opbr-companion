@@ -1,8 +1,1 @@
 /build
-
-# IntelliJ IDEA files
-.idea/
-*.iml
-*.iws
-*.ipr
-out/
