@@ -11,10 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.opbr_companion.ui.components.BottomNavBar
+import com.example.opbr_companion.ui.screen.SupportScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,8 +34,10 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun MainScreen() {
+    var selectedScreen by remember { mutableStateOf("Characters") }
+
     Scaffold(
-        bottomBar = { BottomNavBar() },
+        bottomBar = { BottomNavBar(selectedScreen) { selectedScreen = it } },
         modifier = Modifier.padding(24.dp)
     ) { paddingValues ->
         Column(
@@ -39,10 +46,11 @@ fun MainScreen() {
                 .padding(paddingValues),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "Main Content Here",
-                modifier = Modifier.padding(16.dp)
-            )
+            when (selectedScreen) {
+                "Characters" -> Text(text = "This is the Characters screen")
+                "Support" -> SupportScreen()
+                else -> Text(text = "Unknown screen")
+            }
         }
     }
 }
