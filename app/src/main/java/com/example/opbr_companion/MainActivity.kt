@@ -18,8 +18,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.opbr_companion.ui.components.BottomNavBar
 import com.example.opbr_companion.ui.screen.SupportScreen
+import com.example.opbr_companion.viewmodel.SupportViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     var selectedScreen by remember { mutableStateOf("Characters") }
+    val supportViewModel: SupportViewModel = viewModel()
 
     Scaffold(
         bottomBar = { BottomNavBar(selectedScreen) { selectedScreen = it } },
@@ -48,7 +51,7 @@ fun MainScreen() {
         ) {
             when (selectedScreen) {
                 "Characters" -> Text(text = "This is the Characters screen")
-                "Support" -> SupportScreen()
+                "Support" -> SupportScreen(viewModel = supportViewModel)
                 else -> Text(text = "Unknown screen")
             }
         }
