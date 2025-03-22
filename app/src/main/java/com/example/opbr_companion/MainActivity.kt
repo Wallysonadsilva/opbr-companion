@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.opbr_companion.ui.components.BottomNavBar
 import com.example.opbr_companion.ui.screen.SupportScreen
+import com.example.opbr_companion.ui.theme.OpbrcompanionTheme
 import com.example.opbr_companion.viewmodel.SupportViewModel
 
 class MainActivity : ComponentActivity() {
@@ -28,7 +29,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MainScreen()
+            OpbrcompanionTheme{
+                MainScreen()
+            }
         }
     }
 }
@@ -41,7 +44,7 @@ fun MainScreen() {
 
     Scaffold(
         bottomBar = { BottomNavBar(selectedScreen) { selectedScreen = it } },
-        modifier = Modifier.padding(24.dp)
+        modifier = Modifier
     ) { paddingValues ->
         Column(
             modifier = Modifier
