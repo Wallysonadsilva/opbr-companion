@@ -2,26 +2,39 @@ package com.example.opbr_companion.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,65 +51,90 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.opbr_companion.R
 import com.example.opbr_companion.model.Support
+import com.example.opbr_companion.ui.components.FilterDialog
+import com.example.opbr_companion.ui.theme.OpbrcompanionTheme
 import com.example.opbr_companion.viewmodel.SupportViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SupportScreen(viewModel: SupportViewModel = viewModel() ) {
-    val supportList by viewModel.supportList.collectAsState()
+fun SupportScreen(viewModel: SupportViewModel = viewModel()) {
+    val supports by viewModel.filteredSupportList.collectAsState()
+    val filterState by viewModel.filterState.collectAsState()
+    val allTags by viewModel.allTags.collectAsState()
+    val allColors by viewModel.allColors.collectAsState()
+
+    var showFilterDialog by remember { mutableStateOf(false) }
 
     Scaffold(
+        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
         topBar = {
-            TopAppBar(
-                modifier = Modifier.height(55.dp),
-                title = {
-                    Text(
-                        text = "Support",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                // Left icon
+                IconButton(
+                    onClick = { showFilterDialog = true },
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(start = 8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.tune_icon),
+                        contentDescription = "Left Icon",
+                        tint = Color.Black
                     )
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO */}) {
-                        Icon(
-                            painter = painterResource(R.drawable.tune_icon),
-                            tint = Color.Gray,
-                            contentDescription = "Filter",
-                            modifier = Modifier.padding(end = 16.dp)
-                        )
-                    }
-                },
-            )
+                }
+
+                // Title
+                Text(
+                    text = "Support",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+                // Right icon
+                IconButton(
+                    onClick = {  },
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.tune_icon),
+                        contentDescription = "Filter",
+                        tint = Color.Black
+                    )
+                }
+            }
         }
     ) { paddingValues ->
         Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .clip(RoundedCornerShape(10.dp))
         ) {
-
-            // Convert to explicit List<Support> type
-            val supports = supportList.toList()
-
-            // Using item lambda without type inference
-            LazyColumn (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-            ){
+            LazyColumn {
                 items(supports.size) { index ->
                     SupportItem(supports[index])
                 }
             }
         }
+
+        if (showFilterDialog) {
+            FilterDialog(
+                filterState = filterState,
+                availableColors = allColors,
+                availableTags = allTags,
+                onApply = { color, tags -> viewModel.updateFilter(color, tags) },
+                onDismiss = { showFilterDialog = false }
+            )
+        }
     }
 }
+
 
 @Composable
 fun SupportItem(support: Support) {
@@ -105,7 +143,7 @@ fun SupportItem(support: Support) {
             .fillMaxWidth()
             .padding(horizontal = 26.dp, vertical = 16.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(Color.LightGray)
+            .background(MaterialTheme.colorScheme.primary)
     ) {
         // Image row
         Row (
@@ -140,7 +178,7 @@ fun SupportItem(support: Support) {
                     .padding(12.dp)
                     .shadow(10.dp, shape = RoundedCornerShape(10.dp), clip = false)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color.LightGray)
+                    .background(MaterialTheme.colorScheme.primary)
                     ,
                 horizontalAlignment = Alignment.Start
             ) {
@@ -208,6 +246,7 @@ fun getColorFromName(colorName: String): Color {
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
@@ -230,43 +269,47 @@ fun SupportScreenPreview() {
 
     // Create a simplified version of your screen using the sample data
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                modifier = Modifier.height(35.dp),
-                title = {
-                    Text(
-                        text = "Support",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    )
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO */}) {
-                        Icon(
-                            painter = painterResource(R.drawable.tune_icon),
-                            tint = Color.Gray,
-                            contentDescription = "Filter",
-                            modifier = Modifier.padding(end = 16.dp)
+    OpbrcompanionTheme {
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    modifier = Modifier,
+                    title = {
+                        Text(
+                            text = "Support",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
                         )
-                    }
-                },
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
+                    },
+                    actions = {
+                        IconButton(onClick = { /* TODO */ }) {
+                            Icon(
+                                painter = painterResource(R.drawable.tune_icon),
+                                tint = Color.Gray,
+                                contentDescription = "Filter",
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+                        }
+                    },
+                )
+            }
+        ) { paddingValues ->
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
 
-            LazyColumn {
-                items(sampleSupports.size) { index ->
-                    SupportItem(sampleSupports[index])
+                LazyColumn {
+                    items(sampleSupports.size) { index ->
+                        SupportItem(sampleSupports[index])
+                    }
                 }
             }
         }
