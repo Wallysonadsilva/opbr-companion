@@ -51,7 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.opbr_companion.R
 import com.example.opbr_companion.model.Support
-import com.example.opbr_companion.ui.components.FilterDialog
+import com.example.opbr_companion.ui.components.FilterBar
 import com.example.opbr_companion.ui.theme.OpbrcompanionTheme
 import com.example.opbr_companion.viewmodel.SupportViewModel
 
@@ -64,7 +64,7 @@ fun SupportScreen(viewModel: SupportViewModel = viewModel()) {
     val allTags by viewModel.allTags.collectAsState()
     val allColors by viewModel.allColors.collectAsState()
 
-    var showFilterDialog by remember { mutableStateOf(false) }
+    var showFilterBar by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
@@ -75,7 +75,7 @@ fun SupportScreen(viewModel: SupportViewModel = viewModel()) {
             ) {
                 // Left icon
                 IconButton(
-                    onClick = { showFilterDialog = true },
+                    onClick = { showFilterBar = !showFilterBar },
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .padding(start = 8.dp)
@@ -83,7 +83,6 @@ fun SupportScreen(viewModel: SupportViewModel = viewModel()) {
                     Icon(
                         painter = painterResource(R.drawable.tune_icon),
                         contentDescription = "Left Icon",
-                        tint = Color.Black
                     )
                 }
 
@@ -103,7 +102,7 @@ fun SupportScreen(viewModel: SupportViewModel = viewModel()) {
                         .padding(end = 8.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.tune_icon),
+                        painter = painterResource(R.drawable.info_icon),
                         contentDescription = "Filter",
                         tint = Color.Black
                     )
@@ -116,21 +115,27 @@ fun SupportScreen(viewModel: SupportViewModel = viewModel()) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+
+            if(showFilterBar) {
+                FilterBar(
+                    selectedColor = filterState.selectedColor,
+                    selectedTags = filterState.selectedTags,
+                    availableColors = allColors,
+                    availableTags = allTags,
+                    onColorSelected = { color -> viewModel.updateFilter(color,filterState.selectedTags)},
+                    onTagToggled = { tag ->
+                        val updatedTags = filterState.selectedTags.toMutableSet()
+                        if (updatedTags.contains(tag)) updatedTags.remove(tag) else updatedTags.add(tag)
+                        viewModel.updateFilter(filterState.selectedColor, updatedTags)
+                    }
+                )
+            }
+
             LazyColumn {
                 items(supports.size) { index ->
                     SupportItem(supports[index])
                 }
             }
-        }
-
-        if (showFilterDialog) {
-            FilterDialog(
-                filterState = filterState,
-                availableColors = allColors,
-                availableTags = allTags,
-                onApply = { color, tags -> viewModel.updateFilter(color, tags) },
-                onDismiss = { showFilterDialog = false }
-            )
         }
     }
 }
