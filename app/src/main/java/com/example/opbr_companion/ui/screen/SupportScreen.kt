@@ -58,83 +58,40 @@ import com.example.opbr_companion.viewmodel.SupportViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SupportScreen(viewModel: SupportViewModel = viewModel()) {
+fun SupportScreen(viewModel: SupportViewModel = viewModel(), showFilterBar: Boolean) {
     val supports by viewModel.filteredSupportList.collectAsState()
     val filterState by viewModel.filterState.collectAsState()
     val allTags by viewModel.allTags.collectAsState()
     val allColors by viewModel.allColors.collectAsState()
 
-    var showFilterBar by remember { mutableStateOf(false) }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
 
-    Scaffold(
-        modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
-        topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                // Left icon
-                IconButton(
-                    onClick = { showFilterBar = !showFilterBar },
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(start = 8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.tune_icon),
-                        contentDescription = "Left Icon",
+        if (showFilterBar) {
+            FilterBar(
+                selectedColor = filterState.selectedColor,
+                selectedTags = filterState.selectedTags,
+                availableColors = allColors,
+                availableTags = allTags,
+                onColorSelected = { color ->
+                    viewModel.updateFilter(
+                        color,
+                        filterState.selectedTags
                     )
+                },
+                onTagToggled = { tag ->
+                    val updatedTags = filterState.selectedTags.toMutableSet()
+                    if (updatedTags.contains(tag)) updatedTags.remove(tag) else updatedTags.add(tag)
+                    viewModel.updateFilter(filterState.selectedColor, updatedTags)
                 }
-
-                // Title
-                Text(
-                    text = "Support",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-
-                // Right icon
-                IconButton(
-                    onClick = {  },
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.info_icon),
-                        contentDescription = "Filter",
-                        tint = Color.Black
-                    )
-                }
-            }
+            )
         }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
 
-            if(showFilterBar) {
-                FilterBar(
-                    selectedColor = filterState.selectedColor,
-                    selectedTags = filterState.selectedTags,
-                    availableColors = allColors,
-                    availableTags = allTags,
-                    onColorSelected = { color -> viewModel.updateFilter(color,filterState.selectedTags)},
-                    onTagToggled = { tag ->
-                        val updatedTags = filterState.selectedTags.toMutableSet()
-                        if (updatedTags.contains(tag)) updatedTags.remove(tag) else updatedTags.add(tag)
-                        viewModel.updateFilter(filterState.selectedColor, updatedTags)
-                    }
-                )
-            }
-
-            LazyColumn {
-                items(supports.size) { index ->
-                    SupportItem(supports[index])
-                }
+        LazyColumn {
+            items(supports.size) { index ->
+                SupportItem(supports[index])
             }
         }
     }
@@ -170,7 +127,7 @@ fun SupportItem(support: Support) {
                 contentScale = ContentScale.FillBounds
             )
         }
-        // Support tags and colour
+        // Support tags and color
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -256,7 +213,6 @@ fun getColorFromName(colorName: String): Color {
 @Preview(showBackground = true)
 @Composable
 fun SupportScreenPreview() {
-    // Sample data
     val sampleSupports = listOf(
         Support(
             id = 1,
@@ -271,8 +227,6 @@ fun SupportScreenPreview() {
             supportTags = listOf("Runner", "Straw Hat Pirates", "Paramecia", "New World")
         )
     )
-
-    // Create a simplified version of your screen using the sample data
 
     OpbrcompanionTheme {
         Scaffold(

@@ -1,5 +1,6 @@
 package com.example.opbr_companion.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.opbr_companion.data.SupabaseClient
@@ -48,7 +49,7 @@ class SupportViewModel : ViewModel() {
 
             _supportList.value = supportData
         } catch (e: Exception) {
-            // error
+            Log.d("Error:", "Unable to fetch Support data")
         }
     }
 

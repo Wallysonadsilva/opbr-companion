@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -36,6 +37,7 @@ fun FilterBar(
         .fillMaxWidth()
         .padding(horizontal = 26.dp, vertical = 16.dp)
     ) {
+        Text("Sort by:", color = LightBackgroundColor, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
 
         Text("Tags", fontWeight = FontWeight.Bold)
 

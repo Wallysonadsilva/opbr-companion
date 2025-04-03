@@ -55,13 +55,13 @@ fun BottomNavBar(selectedScreen: String = "Characters", onScreenSelected: (Strin
                 Icon(
                     painter = painterResource(id = icons[index]),
                     contentDescription = item,
-                    tint = if (selectedScreen == item) Color.Blue else Color.Gray,
+                    tint = if (selectedScreen == item) Color(0xFF1d66f0) else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
                     text = titles[index],
                     fontSize = 12.sp,
-                    color = if (selectedScreen == item) Color.Blue else Color.Gray
+                    color = if (selectedScreen == item) Color(0xFF1d66f0) else Color.Gray
                 )
             }
         }
