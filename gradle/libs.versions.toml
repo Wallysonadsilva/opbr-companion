@@ -1,4 +1,5 @@
 [versions]
+accompanistFlowlayout = "0.33.2-alpha"
 agp = "8.9.0"
 bom = "VERSION"
 kotlin = "2.0.21"
@@ -12,6 +13,7 @@ activityCompose = "1.8.0"
 composeBom = "2024.09.00"
 
 [libraries]
+accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowlayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "bom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

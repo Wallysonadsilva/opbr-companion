@@ -1,4 +1,4 @@
-package com.example.opbr_companion.model
+package com.example.opbr_companion.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

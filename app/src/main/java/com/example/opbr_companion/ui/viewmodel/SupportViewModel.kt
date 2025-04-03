@@ -1,11 +1,11 @@
-package com.example.opbr_companion.viewmodel
+package com.example.opbr_companion.ui.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.opbr_companion.data.SupabaseClient
-import com.example.opbr_companion.model.FilterState
-import com.example.opbr_companion.model.Support
+import com.example.opbr_companion.data.model.FilterState
+import com.example.opbr_companion.data.model.Support
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.flow.*
@@ -26,13 +26,16 @@ class SupportViewModel : ViewModel() {
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val allTags: StateFlow<Set<String>> = _supportList
-        .map { list -> list.flatMap { it.supportTags }.toSet() }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+    val allTags = listOf(
+        "Attacker", "Defender", "Runner", "East Blue", "Navy",
+        "The Seven Warlords of the Sea", "Straw Hat Pirates", "Whitebeard Pirates",
+        "Don Quixote Family", "Paramecia", "Zoan", "Logia", "Captain",
+        "The Grand Line", "New World", "Worst Generation", "Charlotte Family",
+        "Kozuki Clan", "Kozuki Clan Servant", "Animal Kingdom Pirates",
+        "Revolutionary Army", "Roger Pirates", "Ex-Roger Pirates", "Fish-Man"
+    )
 
-    val allColors: StateFlow<Set<String>> = _supportList
-        .map { list -> list.map { it.supportColor }.toSet() }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+    val allColors = listOf("Red", "Green", "Blue", "Light", "Dark")
 
     init {
         viewModelScope.launch {

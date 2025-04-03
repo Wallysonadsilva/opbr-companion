@@ -2,23 +2,15 @@ package com.example.opbr_companion.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -28,13 +20,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,10 +38,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.opbr_companion.R
-import com.example.opbr_companion.model.Support
+import com.example.opbr_companion.data.model.Support
 import com.example.opbr_companion.ui.components.FilterBar
 import com.example.opbr_companion.ui.theme.OpbrcompanionTheme
-import com.example.opbr_companion.viewmodel.SupportViewModel
+import com.example.opbr_companion.ui.viewmodel.SupportViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,8 +49,8 @@ import com.example.opbr_companion.viewmodel.SupportViewModel
 fun SupportScreen(viewModel: SupportViewModel = viewModel(), showFilterBar: Boolean) {
     val supports by viewModel.filteredSupportList.collectAsState()
     val filterState by viewModel.filterState.collectAsState()
-    val allTags by viewModel.allTags.collectAsState()
-    val allColors by viewModel.allColors.collectAsState()
+    val allTags = viewModel.allTags
+    val allColors = viewModel.allColors
 
     Column(
         modifier = Modifier
@@ -73,8 +61,8 @@ fun SupportScreen(viewModel: SupportViewModel = viewModel(), showFilterBar: Bool
             FilterBar(
                 selectedColor = filterState.selectedColor,
                 selectedTags = filterState.selectedTags,
-                availableColors = allColors,
-                availableTags = allTags,
+                availableColors = allColors.toSet(),
+                availableTags = allTags.toSet(),
                 onColorSelected = { color ->
                     viewModel.updateFilter(
                         color,
@@ -89,11 +77,28 @@ fun SupportScreen(viewModel: SupportViewModel = viewModel(), showFilterBar: Bool
             )
         }
 
-        LazyColumn {
-            items(supports.size) { index ->
-                SupportItem(supports[index])
+        if (supports.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                Text(
+                    text = "No support data found",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray
+                )
+            }
+        } else {
+            LazyColumn {
+                items(supports.size) { index ->
+                    SupportItem(supports[index])
+                }
             }
         }
+
     }
 }
 
@@ -141,7 +146,7 @@ fun SupportItem(support: Support) {
                     .shadow(10.dp, shape = RoundedCornerShape(10.dp), clip = false)
                     .clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.primary)
-                    ,
+                ,
                 horizontalAlignment = Alignment.Start
             ) {
                 Row(

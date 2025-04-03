@@ -26,7 +26,7 @@ import com.example.opbr_companion.ui.components.DialogAlertInfo
 import com.example.opbr_companion.ui.components.TopBar
 import com.example.opbr_companion.ui.screen.SupportScreen
 import com.example.opbr_companion.ui.theme.OpbrcompanionTheme
-import com.example.opbr_companion.viewmodel.SupportViewModel
+import com.example.opbr_companion.ui.viewmodel.SupportViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

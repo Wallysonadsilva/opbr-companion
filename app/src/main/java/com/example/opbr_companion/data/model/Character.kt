@@ -1,4 +1,4 @@
-package com.example.opbr_companion.model
+package com.example.opbr_companion.data.model
 
 data class Character(
     val id: Int,
