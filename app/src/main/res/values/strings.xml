@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">opbr-companion</string>
     <string name="support_info_alert">Support percentages vary between users. Use these examples to guide your character choices and configurations.\n\nNote: More supports will be added in the future.</string>
+    <string name="character_info_alert">You can filter for characters by their class.\n\nNote: More characters will be added in the future.</string>
+
 </resources>

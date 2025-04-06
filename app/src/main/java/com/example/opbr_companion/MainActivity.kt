@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,8 +26,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.opbr_companion.ui.components.BottomNavBar
 import com.example.opbr_companion.ui.components.DialogAlertInfo
 import com.example.opbr_companion.ui.components.TopBar
+import com.example.opbr_companion.ui.screen.CharacterScreen
 import com.example.opbr_companion.ui.screen.SupportScreen
 import com.example.opbr_companion.ui.theme.OpbrcompanionTheme
+import com.example.opbr_companion.ui.viewmodel.CharacterViewModel
 import com.example.opbr_companion.ui.viewmodel.SupportViewModel
 
 class MainActivity : ComponentActivity() {
@@ -49,23 +53,23 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     var selectedScreen by remember { mutableStateOf("Characters") }
     val supportViewModel: SupportViewModel = viewModel()
+    val characterViewModel: CharacterViewModel = viewModel()
     var showFilterBar by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
 
+    LaunchedEffect(selectedScreen) {
+        showFilterBar = false
+    }
 
     Scaffold(
         topBar = {
             TopBar(
                 title = selectedScreen,
                 onLeftIconClick = {
-                    if (selectedScreen == "Support") {
                         showFilterBar = !showFilterBar
-                    }
                 },
                 onRightIconClick = {
-                    if (selectedScreen == "Support") {
                         showInfoDialog = true
-                    }
                 }
             )
         },
@@ -79,14 +83,20 @@ fun MainScreen() {
             verticalArrangement = Arrangement.Center
         ) {
             if (showInfoDialog) {
+                val alertMessageRes = when (selectedScreen) {
+                    "Support" -> R.string.support_info_alert
+                    "Characters" -> R.string.character_info_alert
+                    else -> R.string.character_info_alert
+                }
+
                 DialogAlertInfo(
-                    message = stringResource(R.string.support_info_alert),
+                    message = stringResource(alertMessageRes),
                     onDismiss = { showInfoDialog = false }
                 )
             }
 
             when (selectedScreen) {
-                "Characters" -> Text(text = "This is the Characters screen")
+                "Characters" -> CharacterScreen(viewModel = characterViewModel, showFilterBar = showFilterBar)
                 "Support" -> SupportScreen(viewModel = supportViewModel, showFilterBar = showFilterBar)
                 else -> Text(text = "Unknown screen")
             }

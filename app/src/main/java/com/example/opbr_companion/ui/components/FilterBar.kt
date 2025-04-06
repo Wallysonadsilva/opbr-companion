@@ -1,6 +1,7 @@
 package com.example.opbr_companion.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -22,6 +23,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.unit.Dp
 
 
 private val LightBackgroundColor = Color(0xFFE5E5E9)
@@ -30,16 +34,24 @@ private val DarkBackgroundColor = Color(0xFF2C2C2E)
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FilterBar(
-    selectedColor: String?,
+    labelText: String,
+    selectedColor: String? = null,
     selectedTags: Set<String>,
-    availableColors: Set<String>,
+    availableColors: Set<String> = emptySet(),
     availableTags: Set<String>,
-    onColorSelected: (String?) -> Unit,
-    onTagToggled: (String) -> Unit
+    onColorSelected: ((String?) -> Unit)? = null,
+    onTagToggled: (String) -> Unit,
+    tagSectionHeight: Dp? = null,
+    centerTags: Boolean = false
 ) {
 
     val isDarkTheme = androidx.compose.foundation.isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) LightBackgroundColor else DarkBackgroundColor
+    val tagSectionModifier = Modifier
+        .then(if (tagSectionHeight != null) Modifier.height(tagSectionHeight) else Modifier)
+        .verticalScroll(rememberScrollState())
+    // for support section height is 150.dp
+
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -47,15 +59,11 @@ fun FilterBar(
     ) {
         Text("Sort by:", color = LightBackgroundColor, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
 
-        Text("Tags", fontWeight = FontWeight.Bold)
+        Text(labelText, fontWeight = FontWeight.Bold)
 
-        Column(
-            modifier = Modifier
-                .height(150.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
+        Column(tagSectionModifier) {
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = if (centerTags) Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally) else Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -79,28 +87,32 @@ fun FilterBar(
             }
         }
 
-        Text("Color", fontWeight = FontWeight.Bold)
+        if (availableColors.isNotEmpty() && onColorSelected != null) {
+            Text("Color", fontWeight = FontWeight.Bold)
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            items(availableColors.toList()) { color ->
-                OutlinedButton(
-                    onClick = {
-                        onColorSelected(if (selectedColor == color) null else color)
-                    },
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = if (selectedColor == color) Color(0xFFf48420) else DarkBackgroundColor.copy(0.4f),
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.height(36.dp),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = color,
-                        fontWeight = if (selectedColor == color) FontWeight.Bold else FontWeight.Normal,
-                    )
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                items(availableColors.toList()) { color ->
+                    OutlinedButton(
+                        onClick = {
+                            onColorSelected(if (selectedColor == color) null else color)
+                        },
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (selectedColor == color) Color(0xFFf48420) else DarkBackgroundColor.copy(
+                                0.4f
+                            ),
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.height(36.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = color,
+                            fontWeight = if (selectedColor == color) FontWeight.Bold else FontWeight.Normal,
+                        )
+                    }
                 }
             }
         }
@@ -117,6 +129,7 @@ fun FilterBarPreview() {
     val selectedTags = remember { mutableStateOf(setOf<String>()) }
 
     FilterBar(
+        labelText = "Tags",
         selectedColor = selectedColor.value,
         selectedTags = selectedTags.value,
         availableColors = availableColors,

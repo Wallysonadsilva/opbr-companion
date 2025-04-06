@@ -59,6 +59,7 @@ fun SupportScreen(viewModel: SupportViewModel = viewModel(), showFilterBar: Bool
 
         if (showFilterBar) {
             FilterBar(
+                labelText = "Tags",
                 selectedColor = filterState.selectedColor,
                 selectedTags = filterState.selectedTags,
                 availableColors = allColors.toSet(),
@@ -73,7 +74,8 @@ fun SupportScreen(viewModel: SupportViewModel = viewModel(), showFilterBar: Bool
                     val updatedTags = filterState.selectedTags.toMutableSet()
                     if (updatedTags.contains(tag)) updatedTags.remove(tag) else updatedTags.add(tag)
                     viewModel.updateFilter(filterState.selectedColor, updatedTags)
-                }
+                },
+                tagSectionHeight = 150.dp
             )
         }
 
