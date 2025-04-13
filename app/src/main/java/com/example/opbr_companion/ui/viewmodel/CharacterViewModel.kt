@@ -23,12 +23,12 @@ class CharacterViewModel : ViewModel() {
     private val _filterState = MutableStateFlow(FilterState())
     val filterState: StateFlow<FilterState> = _filterState
 
-    val filteredCharecterList: StateFlow<List<Character>> = combine(_characterList, _filterState) {
-        characters, filter ->
-        characters.filter {  character ->
-            filter.selectedTags.isEmpty() || filter.selectedTags.contains(character.classType)
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val filteredCharecterList: StateFlow<List<Character>> =
+        combine(_characterList, _filterState) { characters, filter ->
+            characters.filter { character ->
+                filter.selectedTags.isEmpty() || filter.selectedTags.contains(character.classType)
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val allTags = listOf("Attacker", "Defender", "Runner")
 
@@ -65,12 +65,17 @@ class CharacterViewModel : ViewModel() {
 
             _characterList.value = characters
 
-        } catch (e: Exception)  {
+        } catch (e: Exception) {
             Log.e("Supabase", "Error fetching characters: ${e.message}")
         }
     }
 
     fun updateFilter(tags: Set<String>, color: String?) {
-        _filterState.value = FilterState(selectedTags = tags, selectedColor =  color)
+        _filterState.value = FilterState(selectedTags = tags, selectedColor = color)
     }
+
+    fun getCharacterById(id: Int): Character? {
+        return _characterList.value.find { it.id == id }
+    }
+
 }

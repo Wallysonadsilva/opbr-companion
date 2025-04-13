@@ -73,6 +73,8 @@ dependencies {
     implementation("io.coil-kt:coil-compose:1.4.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("io.ktor:ktor-client-android:3.0.0-rc-1")
+    implementation(libs.androidx.navigation.compose)
+
 
 
 

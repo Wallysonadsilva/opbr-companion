@@ -3,6 +3,7 @@ package com.example.opbr_companion.ui.screen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,51 +40,61 @@ import com.example.opbr_companion.ui.viewmodel.CharacterViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CharacterScreen(viewModel: CharacterViewModel = viewModel(), showFilterBar: Boolean) {
+fun CharacterScreen(
+    viewModel: CharacterViewModel = viewModel(),
+    showFilterBar: Boolean,
+    onCharacterClick: (Int) -> Unit
+) {
     val characters by viewModel.filteredCharecterList.collectAsState()
     val filterState by viewModel.filterState.collectAsState()
     val allTags = viewModel.allTags
 
-    if (showFilterBar) {
-        FilterBar(
-            labelText = "Class",
-            selectedTags = filterState.selectedTags,
-            availableTags = allTags.toSet(),
-            onTagToggled = { tag ->
-                val updatedTags = filterState.selectedTags.toMutableSet().apply {
-                    if (contains(tag)) remove(tag) else add(tag)
-                }
-                viewModel.updateFilter(updatedTags, null)
-            },
-            centerTags = true
-        )
-    }
-
-    if (characters.isEmpty()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            Text(
-                text = "No characters data found",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Gray
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        if (showFilterBar) {
+            FilterBar(
+                labelText = "Class",
+                selectedTags = filterState.selectedTags,
+                availableTags = allTags.toSet(),
+                onTagToggled = { tag ->
+                    val updatedTags = filterState.selectedTags.toMutableSet().apply {
+                        if (contains(tag)) remove(tag) else add(tag)
+                    }
+                    viewModel.updateFilter(updatedTags, null)
+                },
+                centerTags = true
             )
         }
-    } else {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(26.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(characters.size) { index ->
-                CharacterCard(characters[index])
 
+        if (characters.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                Text(
+                    text = "No characters data found",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray
+                )
+            }
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                contentPadding = PaddingValues(26.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(characters.size) { index ->
+                    CharacterCard(characters[index]) {
+                        onCharacterClick(characters[index].id)
+                    }
+
+                }
             }
         }
     }
@@ -91,9 +102,10 @@ fun CharacterScreen(viewModel: CharacterViewModel = viewModel(), showFilterBar: 
 
 
 @Composable
-fun CharacterCard(character: Character) {
+fun CharacterCard(character: Character, onCharacterClick: () -> Unit) {
     Column(
         modifier = Modifier
+            .clickable { onCharacterClick() }
             .shadow(10.dp, shape = RoundedCornerShape(10.dp), clip = false)
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White)
@@ -126,9 +138,57 @@ fun CharacterCard(character: Character) {
 @Composable
 fun CharacterScreenPreview() {
     val sampleCharacters = listOf(
-        Character(1, "", "Attacker", "Red", "Sakazuki", null, null, null, null, null, null, null, null, null, null),
-        Character(2, "", "Defender", "Blue", "Rob Lucci", null, null, null, null, null, null, null, null, null, null),
-        Character(3, "", "Runner", "Green", "Soba Mask", null, null, null, null, null, null, null, null, null, null),
+        Character(
+            1,
+            "",
+            "Attacker",
+            "Red",
+            "Sakazuki",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ),
+        Character(
+            2,
+            "",
+            "Defender",
+            "Blue",
+            "Rob Lucci",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ),
+        Character(
+            3,
+            "",
+            "Runner",
+            "Green",
+            "Soba Mask",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ),
     )
 
     LazyVerticalGrid(
@@ -139,7 +199,7 @@ fun CharacterScreenPreview() {
         modifier = Modifier.fillMaxSize()
     ) {
         items(sampleCharacters) { character ->
-            CharacterCard(character)
+            CharacterCard(character, onCharacterClick = {})
         }
     }
 }

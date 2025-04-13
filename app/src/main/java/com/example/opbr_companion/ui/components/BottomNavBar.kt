@@ -19,21 +19,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.opbr_companion.R
 
-@Preview(showBackground = true)
-@Composable
-fun BottomNavBar(selectedScreen: String = "Characters", onScreenSelected: (String) -> Unit = {}) {
+data class BottomNavItem(
+    val title: String,
+    val route: String,
+    val iconRes: Int
+)
 
-    val items = listOf("Characters", "Support", "Medal Sets")
-    val titles = listOf("Characters", "Support", "Medal Sets")
-    val icons = listOf(
-        R.drawable.group_icons,
-        R.drawable.group_icons_2,
-        R.drawable.star_icon
+@Composable
+fun BottomNavBar(
+    currentRoute: String,
+    onTabSelected: (String) -> Unit
+) {
+    val items = listOf(
+        BottomNavItem("Characters", "character_list", R.drawable.group_icons),
+        BottomNavItem("Support", "support", R.drawable.group_icons_2),
+        BottomNavItem("Medal Sets", "medal_sets", R.drawable.star_icon)
     )
 
     Row(
@@ -45,23 +49,24 @@ fun BottomNavBar(selectedScreen: String = "Characters", onScreenSelected: (Strin
             .background(MaterialTheme.colorScheme.primary),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        items.forEachIndexed { index, item ->
+        items.forEach { item ->
+            val isSelected = currentRoute == item.route
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .clickable { onScreenSelected(item) }
+                    .clickable { onTabSelected(item.route) }
                     .padding(8.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = icons[index]),
-                    contentDescription = item,
-                    tint = if (selectedScreen == item) Color(0xFF1d66f0) else Color.Gray,
+                    painter = painterResource(id = item.iconRes),
+                    contentDescription = item.title,
+                    tint = if (isSelected) Color(0xFF1d66f0) else Color.Gray,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
-                    text = titles[index],
+                    text = item.title,
                     fontSize = 12.sp,
-                    color = if (selectedScreen == item) Color(0xFF1d66f0) else Color.Gray
+                    color = if (isSelected) Color(0xFF1d66f0) else Color.Gray
                 )
             }
         }
