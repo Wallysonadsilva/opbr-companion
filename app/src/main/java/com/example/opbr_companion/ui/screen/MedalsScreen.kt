@@ -26,6 +26,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.opbr_companion.data.model.MedalSet
 import com.example.opbr_companion.ui.components.FilterBar
+import com.example.opbr_companion.ui.components.MedalDetailSheet
 import com.example.opbr_companion.ui.viewmodel.MedalViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -43,11 +48,19 @@ import com.example.opbr_companion.ui.viewmodel.MedalViewModel
 fun MedalScreen(
     viewModel: MedalViewModel = viewModel(),
     showFilterBar: Boolean,
-    onMedalClick: (Int) -> Unit
 ) {
     val medals = viewModel.filterMedalList.collectAsState().value
     val filterState = viewModel.filterState.collectAsState().value
     val allTags = viewModel.allTags
+
+    var selectedMedal by remember { mutableStateOf<MedalSet?>(null) }
+
+    selectedMedal?.let {
+        MedalDetailSheet(
+            medalSet = it,
+            onDismiss = { selectedMedal = null }
+        )
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         if (showFilterBar) {
@@ -89,7 +102,8 @@ fun MedalScreen(
             ) {
                 items(medals.size) { index ->
                     MedalCard(medals[index]) {
-                        onMedalClick(medals[index].id)
+                        //onMedalClick(medals[index].id)
+                        selectedMedal = medals[index]
                     }
                 }
             }
@@ -107,7 +121,7 @@ fun MedalCard(medalSet: MedalSet, onClick: () -> Unit) {
         modifier = Modifier
             .padding(8.dp)
             .clip(RoundedCornerShape(20.dp))
-            .background(Color(0xFFF5F5F5))
+            .background(MaterialTheme.colorScheme.primary)
             .clickable { onClick() }
             .padding(20.dp)
     ) {

@@ -80,7 +80,7 @@ fun MainScreen() {
                 val alertMessage = when (currentRoute) {
                     "support" -> R.string.support_info_alert
                     "character_list" -> R.string.character_info_alert
-                    else -> R.string.character_info_alert
+                    else -> R.string.medals_info_alert
                 }
 
                 DialogAlertInfo(
@@ -127,9 +127,6 @@ fun MainScreen() {
                     MedalScreen(
                         viewModel = medalViewModel,
                         showFilterBar = showFilterBar,
-                        onMedalClick = { id ->
-                            // TODO: Navigate to a detail screen (optional)
-                        }
                     )
                 }
             }
