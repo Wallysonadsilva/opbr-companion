@@ -27,6 +27,7 @@ import com.example.opbr_companion.ui.components.BottomNavBar
 import com.example.opbr_companion.ui.components.DialogAlertInfo
 import com.example.opbr_companion.ui.components.TopBar
 import com.example.opbr_companion.ui.viewmodel.CharacterViewModel
+import com.example.opbr_companion.ui.viewmodel.MedalViewModel
 import com.example.opbr_companion.ui.viewmodel.SupportViewModel
 
 @Composable
@@ -45,6 +46,7 @@ fun MainScreen() {
 
     val supportViewModel: SupportViewModel = viewModel()
     val characterViewModel: CharacterViewModel = viewModel()
+    val medalViewModel: MedalViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -122,11 +124,12 @@ fun MainScreen() {
                 }
 
                 composable("medal_sets") {
-                    Text(
-                        text = "Medal Sets Coming Soon!",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .wrapContentSize(Alignment.Center)
+                    MedalScreen(
+                        viewModel = medalViewModel,
+                        showFilterBar = showFilterBar,
+                        onMedalClick = { id ->
+                            // TODO: Navigate to a detail screen (optional)
+                        }
                     )
                 }
             }
