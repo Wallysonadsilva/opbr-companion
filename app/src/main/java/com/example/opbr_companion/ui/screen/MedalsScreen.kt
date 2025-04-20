@@ -102,7 +102,6 @@ fun MedalScreen(
             ) {
                 items(medals.size) { index ->
                     MedalCard(medals[index]) {
-                        //onMedalClick(medals[index].id)
                         selectedMedal = medals[index]
                     }
                 }
@@ -152,7 +151,7 @@ fun MedalCard(medalSet: MedalSet, onClick: () -> Unit) {
                 Text(
                     text = traitText,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.DarkGray,
+                    color = Color.Gray,
                     modifier = Modifier.weight(1f)
                 )
             }

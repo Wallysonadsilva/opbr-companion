@@ -4,14 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -23,8 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material3.Button
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.unit.Dp
 
 
@@ -44,35 +40,42 @@ fun FilterBar(
     tagSectionHeight: Dp? = null,
     centerTags: Boolean = false
 ) {
-
-    val isDarkTheme = androidx.compose.foundation.isSystemInDarkTheme()
-    val backgroundColor = if (isDarkTheme) LightBackgroundColor else DarkBackgroundColor
     val tagSectionModifier = Modifier
         .then(if (tagSectionHeight != null) Modifier.height(tagSectionHeight) else Modifier)
         .verticalScroll(rememberScrollState())
-    // for support section height is 150.dp
 
-
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 26.dp, vertical = 16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 26.dp, vertical = 16.dp)
     ) {
-        Text("Sort by:", color = LightBackgroundColor, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        Text(
+            "Sort by:",
+            color = LightBackgroundColor,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-        Text(labelText, fontWeight = FontWeight.Bold)
+        Text(labelText, fontWeight = FontWeight.Bold, color = Color(0xFF007FFF))
 
         Column(tagSectionModifier) {
             FlowRow(
-                horizontalArrangement = if (centerTags) Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally) else Arrangement.spacedBy(8.dp),
+                horizontalArrangement = if (centerTags) Arrangement.spacedBy(
+                    8.dp,
+                    Alignment.CenterHorizontally
+                ) else Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
             ) {
                 availableTags.forEach { tag ->
-                    OutlinedButton(
+                    Button(
                         onClick = { onTagToggled(tag) },
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = if (selectedTags.contains(tag)) Color(0xFFf48420) else DarkBackgroundColor.copy(0.4f),
+                            containerColor = if (selectedTags.contains(tag)) Color(0xFFf48420) else DarkBackgroundColor.copy(
+                                0.4f
+                            ),
                             contentColor = Color.White
                         ),
                         shape = RoundedCornerShape(8.dp)
@@ -95,7 +98,7 @@ fun FilterBar(
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
                 items(availableColors.toList()) { color ->
-                    OutlinedButton(
+                    Button(
                         onClick = {
                             onColorSelected(if (selectedColor == color) null else color)
                         },

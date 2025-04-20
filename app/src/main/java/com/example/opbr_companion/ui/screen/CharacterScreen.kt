@@ -108,7 +108,7 @@ fun CharacterCard(character: Character, onCharacterClick: () -> Unit) {
             .clickable { onCharacterClick() }
             .shadow(10.dp, shape = RoundedCornerShape(10.dp), clip = false)
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.primary)
             .padding()
     ) {
         Image(

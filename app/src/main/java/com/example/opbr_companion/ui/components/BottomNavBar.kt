@@ -3,10 +3,12 @@ package com.example.opbr_companion.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,34 +42,40 @@ fun BottomNavBar(
         BottomNavItem("Medal Sets", "medal_sets", R.drawable.star_icon)
     )
 
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(75.dp)
-            .padding(8.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.primary),
-        horizontalArrangement = Arrangement.SpaceAround
+            .navigationBarsPadding()
     ) {
-        items.forEach { item ->
-            val isSelected = currentRoute == item.route
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .clickable { onTabSelected(item.route) }
-                    .padding(8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = item.iconRes),
-                    contentDescription = item.title,
-                    tint = if (isSelected) Color(0xFF1d66f0) else Color.Gray,
-                    modifier = Modifier.size(24.dp)
-                )
-                Text(
-                    text = item.title,
-                    fontSize = 12.sp,
-                    color = if (isSelected) Color(0xFF1d66f0) else Color.Gray
-                )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(75.dp)
+                .padding(4.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.primary),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            items.forEach { item ->
+                val isSelected = currentRoute == item.route
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .clickable { onTabSelected(item.route) }
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = item.iconRes),
+                        contentDescription = item.title,
+                        tint = if (isSelected) Color(0xFF1d66f0) else Color.Gray,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = item.title,
+                        fontSize = 12.sp,
+                        color = if (isSelected) Color(0xFF1d66f0) else Color.Gray
+                    )
+                }
             }
         }
     }
