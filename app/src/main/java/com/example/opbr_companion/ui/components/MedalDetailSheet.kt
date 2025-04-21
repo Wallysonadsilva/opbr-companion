@@ -66,7 +66,7 @@ fun MedalDetailSheet(
                     Text(
                         text = trait,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.DarkGray,
+                        color = Color.Gray,
                         modifier = Modifier.weight(1f)
                     )
                 }
