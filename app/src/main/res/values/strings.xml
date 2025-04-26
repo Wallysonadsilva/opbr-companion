@@ -5,5 +5,17 @@
     <string name="medals_info_alert">You can search for medal sets that are suitable for each class.\n\nNote: More sets will be added in the future.</string>
     <string name="recommended_set_note">Note that these recommendations may change as more medals are introduced to the game</string>
     <string name="Recommended_stats_note">Note that these recommendations may change if this character gets buffed or nerfed in the future.</string>
-
+    <string name="back_button_description">Back to previous screen</string>
+    <string name="all_characters">All Characters</string>
+    <string name="character_not_found">Character not found</string>
+    <string name="character_tags">Character Tags</string>
+    <string name="color_label">Color:</string>
+    <string name="color_icon_description">Character color indicator</string>
+    <string name="class_label">Class: </string>
+    <string name="unknown">Unknown</string>
+    <string name="medal_image_description">Character medal</string>
+    <string name="medal_tags">Medal Tags </string>
+    <string name="recommended_set">Recommended Set</string>
+    <string name="recommended_item_description">Recommended item</string>
+    <string name="recommended_stats_format">Recommended Stats: %1$s</string>
 </resources>
