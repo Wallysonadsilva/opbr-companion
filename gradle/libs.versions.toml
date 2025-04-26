@@ -1,8 +1,9 @@
 [versions]
 accompanistFlowlayout = "0.33.2-alpha"
 accompanistSystemuicontroller = "0.35.0-alpha"
-agp = "8.9.0"
+agp = "8.9.1"
 bom = "VERSION"
+coilCompose = "3.1.0"
 kotlin = "2.0.21"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -20,6 +21,7 @@ accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "bom" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
