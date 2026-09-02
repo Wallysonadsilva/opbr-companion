@@ -27,7 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.guide.opbr_companion.data.model.MedalSet
-import coil.compose.rememberImagePainter
+import coil3.compose.rememberAsyncImagePainter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,6 +45,20 @@ fun MedalDetailSheet(
                 .padding(horizontal = 24.dp, vertical = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
+            // Set name. The sheet previously opened straight into the medal list with
+            // nothing identifying which set was being viewed.
+            Text(
+                text = medalSet.name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(bottom = 8.dp),
+                color = Color.LightGray
+            )
+
             // Medal + Trait List
             medalSet.medals.forEachIndexed { index, medalUrl ->
                 val trait = medalSet.medalTraits.getOrNull(index) ?: ""
@@ -55,7 +69,7 @@ fun MedalDetailSheet(
                         .padding(vertical = 8.dp)
                 ) {
                     Image(
-                        painter = rememberImagePainter(medalUrl),
+                        painter = rememberAsyncImagePainter(medalUrl),
                         contentDescription = "Medal Icon",
                         modifier = Modifier
                             .size(44.dp)
@@ -66,7 +80,7 @@ fun MedalDetailSheet(
                     Text(
                         text = trait,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -85,8 +99,8 @@ fun MedalDetailSheet(
             )
             Text(
                 text = medalSet.bestFor ?: "—",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 12.dp)
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 2.dp, bottom = 12.dp)
             )
 
             HorizontalDivider(
@@ -102,8 +116,8 @@ fun MedalDetailSheet(
             )
             Text(
                 text = medalSet.description ?: "—",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(bottom = 12.dp)
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 2.dp, bottom = 12.dp)
             )
 
             HorizontalDivider(
@@ -120,7 +134,7 @@ fun MedalDetailSheet(
             medalSet.tags.forEach {
                 Text(
                     text = it,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
 

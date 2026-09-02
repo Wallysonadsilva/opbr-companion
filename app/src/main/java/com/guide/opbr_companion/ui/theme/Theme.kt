@@ -17,11 +17,13 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
 private val lightScheme = lightColorScheme(
-    primary = ColumnBackgroundLight
+    primary = ColumnBackgroundLight,
+    secondary = AccentBlueLight
 )
 
 private val darkScheme = darkColorScheme(
-    primary = ColumnBackgroundDark
+    primary = ColumnBackgroundDark,
+    secondary = AccentBlueDark
 )
 
 @Composable

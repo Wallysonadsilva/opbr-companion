@@ -116,8 +116,27 @@ fun MainScreen() {
                 composable("support") {
                     SupportScreen(
                         viewModel = supportViewModel,
-                        showFilterBar = showFilterBar
+                        showFilterBar = showFilterBar,
+                        onSupportClick = { id ->
+                            navController.navigate("support_detail/$id")
+                        }
                     )
+                }
+
+                composable(
+                    "support_detail/{supportId}",
+                    arguments = listOf(navArgument("supportId") { type = NavType.IntType })
+                ) { backStackEntry ->
+                    val id = backStackEntry.arguments?.getInt("supportId")
+                    if (id != null) {
+                        SupportDetailScreen(
+                            supportId = id,
+                            viewModel = supportViewModel,
+                            onBack = { navController.popBackStack() }
+                        )
+                    } else {
+                        Text("Support not found", color = Color.Red)
+                    }
                 }
 
                 composable("medal_sets") {

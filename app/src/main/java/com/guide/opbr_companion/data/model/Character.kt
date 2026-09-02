@@ -19,6 +19,9 @@ data class Character(
     val medal: String?,
     @SerialName("medal_tags") val medalTags: List<String>?,
     @SerialName("medal_trait") val medalTrait: String?,
-    @SerialName("character_tags") val characterTags: List<String>?
+    @SerialName("character_tags") val characterTags: List<String>?,
+    // List of alternative medal sets; each inner list is one set of medal image URLs.
+    // Defaulted so characters without alternatives decode cleanly.
+    @SerialName("alt_sets") val altSets: List<List<String>>? = null
 )
 

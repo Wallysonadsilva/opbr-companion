@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
@@ -37,9 +38,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberImagePainter
+import coil3.compose.rememberAsyncImagePainter
 import com.guide.opbr_companion.data.model.MedalSet
 import com.guide.opbr_companion.ui.components.FilterBar
+import com.guide.opbr_companion.ui.components.MedalListSkeleton
 import com.guide.opbr_companion.ui.components.MedalDetailSheet
 import com.guide.opbr_companion.ui.viewmodel.MedalViewModel
 
@@ -52,6 +54,7 @@ fun MedalScreen(
     val medals = viewModel.filterMedalList.collectAsState().value
     val filterState = viewModel.filterState.collectAsState().value
     val allTags = viewModel.allTags
+    val isLoading = viewModel.isLoading.collectAsState().value
 
     var selectedMedal by remember { mutableStateOf<MedalSet?>(null) }
 
@@ -78,7 +81,9 @@ fun MedalScreen(
             )
         }
 
-        if (medals.isEmpty()) {
+        if (isLoading) {
+            MedalListSkeleton()
+        } else if (medals.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,7 +94,7 @@ fun MedalScreen(
                 Text(
                     text = "No medal sets found",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         } else {
@@ -138,20 +143,24 @@ fun MedalCard(medalSet: MedalSet, onClick: () -> Unit) {
             val traitText = descriptions.getOrNull(index) ?: ""
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             ) {
+                // Fixed 60dp medal. weight(0.3f) previously overrode size(60.dp), so the
+                // medal was sized by column share and grew or shrank with screen width.
                 Image(
-                    painter = rememberImagePainter(iconUrl),
+                    painter = rememberAsyncImagePainter(iconUrl),
                     contentDescription = "Medal Icon",
                     modifier = Modifier
                         .size(60.dp)
                         .clip(CircleShape)
-                        .weight(0.3f)
                 )
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = traitText,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -168,13 +177,13 @@ fun MedalCard(medalSet: MedalSet, onClick: () -> Unit) {
         ) {
             Text(
                 text = "Set Detail",
-                color = Color(0xFF007FFF),
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.SemiBold
             )
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,
-                tint = Color(0xFF007FFF),
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(start = 4.dp)
             )
         }

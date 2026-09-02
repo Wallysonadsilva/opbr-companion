@@ -22,6 +22,11 @@ class MedalViewModel : ViewModel() {
     private val _filterState = MutableStateFlow(FilterState())
     val filterState: StateFlow<FilterState> = _filterState
 
+    // True until the first fetch settles. Lets the UI show skeleton placeholders
+    // instead of the "no data found" message while the request is still in flight.
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     // Add null safety to filter operation
     val filterMedalList: StateFlow<List<MedalSet>> =
         combine(_medalList, _filterState) { medals, filter ->
@@ -65,6 +70,8 @@ class MedalViewModel : ViewModel() {
             Log.e("Supabase", "Error fetching medals: ${e.message}", e)
             // Keep the existing list in case of error instead of setting to empty
             // This prevents the UI from flickering if a refresh fails
+        } finally {
+            _isLoading.value = false
         }
     }
 

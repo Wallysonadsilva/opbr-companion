@@ -5,11 +5,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -28,13 +35,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberImagePainter
+import coil3.compose.rememberAsyncImagePainter
 import com.guide.opbr_companion.data.model.Character
 import com.guide.opbr_companion.ui.components.FilterBar
+import com.guide.opbr_companion.ui.components.CharacterGridSkeleton
 import com.guide.opbr_companion.ui.viewmodel.CharacterViewModel
 
 
@@ -48,6 +57,7 @@ fun CharacterScreen(
     val characters by viewModel.filteredCharecterList.collectAsState()
     val filterState by viewModel.filterState.collectAsState()
     val allTags = viewModel.allTags
+    val isLoading by viewModel.isLoading.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -67,7 +77,9 @@ fun CharacterScreen(
             )
         }
 
-        if (characters.isEmpty()) {
+        if (isLoading) {
+            CharacterGridSkeleton()
+        } else if (characters.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -78,7 +90,7 @@ fun CharacterScreen(
                 Text(
                     text = "No characters data found",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         } else {
@@ -106,30 +118,72 @@ fun CharacterCard(character: Character, onCharacterClick: () -> Unit) {
     Column(
         modifier = Modifier
             .clickable { onCharacterClick() }
-            .shadow(10.dp, shape = RoundedCornerShape(10.dp), clip = false)
+            .shadow(6.dp, shape = RoundedCornerShape(12.dp), clip = false)
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.primary)
-            .padding()
     ) {
         Image(
-            painter = rememberImagePainter(character.artwork),
+            painter = rememberAsyncImagePainter(character.artwork),
             contentDescription = character.name,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .clip(RoundedCornerShape(12.dp)),
+                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
             contentScale = ContentScale.Crop
         )
-        Text(
-            text = character.name,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF007FFF),
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center,
+        // Fixed-height name slot: long names used to wrap and make cards in the same
+        // grid row different heights. Two lines with an ellipsis keeps the grid even
+        // while still showing far more of a long name than a single line would.
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp)
-        )
+                .height(46.dp)
+                .padding(horizontal = 6.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = character.name,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary,
+                fontSize = 14.sp,
+                lineHeight = 17.sp,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        // Colour and class, the two things anyone scans a roster for. Both were
+        // already being fetched and shown on the detail screen, so the grid was
+        // asking people to open a character to learn what it is. Fixed height,
+        // so the cards in a row stay level.
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(22.dp)
+                .padding(horizontal = 6.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            characterColorOrNull(character.color)?.let { swatch ->
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(swatch)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+            }
+            Text(
+                text = character.classType,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 11.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
     }
 }
 

@@ -3,25 +3,24 @@ import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    kotlin("plugin.serialization") version "1.9.0"
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "com.guide.opbr_companion"
-    compileSdk = 35
+    compileSdk = 37
 
     val properties = Properties().apply {
         load(FileInputStream(rootProject.file("local.properties")))
     }
 
     defaultConfig {
-        applicationId = "app.opbr_companion"
+        applicationId = "app.opbrcompanion"
         minSdk = 24
-        targetSdk = 35
-        versionCode =2
-        versionName = "1.0.1"
+        this.targetSdk = 36
+        versionCode = 10
+        versionName = "1.1.6"
 
         buildConfigField(
             "String",
@@ -34,7 +33,13 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true // Enable minification for production
+            // R8: strips unused code and renames what is left. Play reports the
+            // result as the app's optimisation score, and without this it reads
+            // "Low" with no R8 metadata at all.
+            isMinifyEnabled = true
+            // Drops resources no surviving code path references. Only legal
+            // alongside minify, because it is the shrunken code it works from.
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -46,12 +51,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = "11"
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
@@ -60,23 +61,34 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.compose)
-    implementation("io.coil-kt:coil-compose:1.4.0")
-    implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
-    implementation("io.github.jan-tennert.supabase:postgrest-kt")
-    implementation("io.github.jan-tennert.supabase:realtime-kt")
+    implementation(libs.androidx.material.icons.core)
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("io.ktor:ktor-client-android:3.0.0-rc-1")
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+    implementation(libs.ktor.client.okhttp)
+
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.postgrest.kt)
+    implementation(libs.realtime.kt)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

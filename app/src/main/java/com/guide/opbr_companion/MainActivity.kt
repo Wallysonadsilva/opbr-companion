@@ -8,11 +8,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.guide.opbr_companion.ui.screen.MainScreen
 import com.guide.opbr_companion.ui.theme.OpbrcompanionTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Installed before super.onCreate() so the branded launch screen shows immediately
+        // and is swapped for Theme.Opbrcompanion once the first frame is ready.
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         try {

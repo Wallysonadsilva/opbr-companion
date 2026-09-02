@@ -16,7 +16,7 @@
             android:name="com.guide.opbr_companion.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Opbrcompanion">
+            android:theme="@style/Theme.Opbrcompanion.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -2,4 +2,18 @@
 <resources>
 
     <style name="Theme.Opbrcompanion" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!--
+      Branded launch screen. Shows the app logo on the artwork's own backdrop (#1E1E1E)
+      and then hands off to the normal app theme. Using core-splashscreen means there is
+      exactly ONE splash on every API level: it drives the platform splash on Android 12+
+      and backports the same look down to API 24, instead of a custom splash appearing
+      after the system one.
+    -->
+    <style name="Theme.Opbrcompanion.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#1E1E1E</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.Opbrcompanion</item>
+    </style>
+
 </resources>

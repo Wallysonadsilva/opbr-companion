@@ -18,21 +18,20 @@ class SupportViewModel : ViewModel() {
     private val _filterState = MutableStateFlow(FilterState())
     val filterState: StateFlow<FilterState> = _filterState
 
+    // True until the first fetch settles. Lets the UI show skeleton placeholders
+    // instead of the "no data found" message while the request is still in flight.
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     val filteredSupportList: StateFlow<List<Support>> = combine(_supportList, _filterState) { supports, filter ->
         supports.filter { support ->
-            // Add null safety to color matching
+            // No colour selected means "any colour", so an absent filter matches everything.
             val colorMatches = filter.selectedColor?.let {
-                support.supportColor?.equals(it, ignoreCase = true)
+                support.supportColor.equals(it, ignoreCase = true)
             } ?: true
 
-            // Add null safety to tag matching
-            val tagsMatch = if (filter.selectedTags.isEmpty()) {
-                true
-            } else {
-                support.supportTags?.let { tags ->
-                    filter.selectedTags.all { tag -> tags.contains(tag) }
-                } ?: false
-            }
+            // all {} is vacuously true on an empty selection, which is the "no tag filter" case.
+            val tagsMatch = filter.selectedTags.all { tag -> support.supportTags.contains(tag) }
 
             colorMatches && tagsMatch
         }
@@ -69,6 +68,8 @@ class SupportViewModel : ViewModel() {
         } catch (e: Exception) {
             Log.e("SupportViewModel", "Error fetching support data: ${e.message}", e)
             // Keep existing list on error instead of setting to empty
+        } finally {
+            _isLoading.value = false
         }
     }
 
